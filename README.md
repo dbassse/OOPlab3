@@ -1,10 +1,17 @@
 # 🧮 Наследование и полиморфизм
 
 ![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)
-![Type Checking](https://img.shields.io/badge/types-mypy--strict-blue.svg)
-![OOP](https://img.shields.io/badge/OOP-абстракция%2Fнаследование%2Fполиморфизм-green.svg)
+![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)
+![Type Checking](https://img.shields.io/badge/types-mypy-blue.svg)
+![Testing](https://img.shields.io/badge/tests-pytest-green.svg)
 
-Проект реализует систему для работы с различными типами чисел, включая базовые арифметические операции, возведение в степень, логарифмы, а также поддержку десятичных и двоичных чисел.
+Проект для лабораторной работы по Объектно-Ориентированному Программированию с полным набором инструментов качества кода.
+
+## 👨‍💻 Автор
+
+**Давид Даниелян** 
+
+---
 
 ## 📦 Структура проекта
 
@@ -55,3 +62,4 @@
 Класс для работы с двоичных чисел, наследуется от Integer.
 
 Аналогично, только работа проводиться с двоичной системой счисления.
+
