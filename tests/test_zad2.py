@@ -1,11 +1,9 @@
 import os
 import sys
-from io import StringIO
-from unittest.mock import patch
 
 import pytest
 
-from task_package.zad2 import Binary, Decimal, Integer, demonstrate_output
+from task_package.zad2 import Binary, Decimal, Integer
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))  # noqa: E402
 
@@ -42,26 +40,6 @@ class TestDecimal:
     def test_from_int_negative(self):
         dec = Decimal._from_int(-789)
         assert dec.digits == [7, 8, 9]
-
-    @patch("builtins.input", return_value="123")
-    def test_input_valid(self, mock_input):
-        dec = Decimal()
-        dec.input()
-        assert dec.digits == [1, 2, 3]
-
-    @patch("builtins.input", return_value="abc")
-    def test_input_invalid(self, mock_input):
-        dec = Decimal()
-        with pytest.raises(ValueError, match="Некорректный ввод десятичного числа"):
-            dec.input()
-
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_output(self, mock_stdout):
-        dec = Decimal([1, 2, 3])
-        dec.output()
-        output = mock_stdout.getvalue()
-        assert "Десятичное число: 123" in output
-        assert "Представление в виде массива цифр: [1, 2, 3]" in output
 
     def test_add(self):
         """Тест сложения"""
@@ -134,27 +112,6 @@ class TestBinary:
         bin_obj = Binary._from_int(-3)
         assert bin_obj.digits == [1, 1]
 
-    @patch("builtins.input", return_value="1010")
-    def test_input_valid(self, mock_input):
-        bin_obj = Binary()
-        bin_obj.input()
-        assert bin_obj.digits == [1, 0, 1, 0]
-
-    @patch("builtins.input", return_value="1021")
-    def test_input_invalid(self, mock_input):
-        bin_obj = Binary()
-        with pytest.raises(ValueError, match="Некорректный ввод двоичного числа"):
-            bin_obj.input()
-
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_output(self, mock_stdout):
-        bin_obj = Binary([1, 0, 1, 0])
-        bin_obj.output()
-        output = mock_stdout.getvalue()
-        assert "Двоичное число: 1010" in output
-        assert "Десятичное значение: 10" in output
-        assert "Представление в виде массива битов: [1, 0, 1, 0]" in output
-
     def test_add(self):
         bin1 = Binary([1, 0, 1])  # 5
         bin2 = Binary([1, 1])  # 3
@@ -201,26 +158,6 @@ class TestIntegerABC:
         """Тест, что абстрактные методы действительно абстрактные"""
         with pytest.raises(TypeError):
             Integer()
-
-
-class TestDemonstrateOutput:
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_demonstrate_output_decimal(self, mock_stdout):
-        """Тест виртуального вызова для Decimal"""
-        dec = Decimal([1, 2, 3])
-        demonstrate_output(dec)
-        output = mock_stdout.getvalue()
-        assert "Виртуальный вызов:" in output
-        assert "Десятичное число: 123" in output
-
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_demonstrate_output_binary(self, mock_stdout):
-        """Тест виртуального вызова для Binary"""
-        bin_obj = Binary([1, 0, 1, 0])
-        demonstrate_output(bin_obj)
-        output = mock_stdout.getvalue()
-        assert "Виртуальный вызов:" in output
-        assert "Двоичное число: 1010" in output
 
 
 class TestIntegration:

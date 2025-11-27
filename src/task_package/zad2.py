@@ -13,13 +13,13 @@ class Integer(ABC):
         self.digits = digits
 
     @abstractmethod
-    def input(self) -> None:
-        """Абстрактный метод ввода числа"""
+    def __str__(self) -> str:
+        """Строковое представление числа"""
         pass
 
     @abstractmethod
-    def output(self) -> None:
-        """Абстрактный метод вывода числа"""
+    def __repr__(self) -> str:
+        """Формальное строковое представление объекта"""
         pass
 
     @abstractmethod
@@ -46,7 +46,7 @@ class Integer(ABC):
 class Decimal(Integer):
     """Класс для десятичных чисел"""
 
-    def __init__(self, digits: Optional[List[int]] = None) -> None:  # Исправлено
+    def __init__(self, digits: Optional[List[int]] = None) -> None:
         super().__init__(digits)
         self._validate_digits()
 
@@ -72,21 +72,13 @@ class Decimal(Integer):
             n //= 10
         return cls(digits)
 
-    def input(self) -> None:
-        """Ввод десятичного числа с клавиатуры"""
-        try:
-            num_str = input("Введите десятичное число: ")
-            num = int(num_str)
-            new_obj = self._from_int(num)
-            self.digits = new_obj.digits
-            self._validate_digits()
-        except ValueError:
-            raise ValueError("Некорректный ввод десятичного числа")
+    def __str__(self) -> str:
+        """Строковое представление в виде десятичного числа"""
+        return str(self._to_int())
 
-    def output(self) -> None:
-        """Вывод десятичного числа"""
-        print(f"Десятичное число: {self._to_int()}")
-        print(f"Представление в виде массива цифр: {self.digits}")
+    def __repr__(self) -> str:
+        """Формальное представление в виде массива цифр"""
+        return f"Decimal({self.digits})"
 
     def add(self, other: "Decimal") -> "Decimal":
         """Сложение десятичных чисел"""
@@ -115,14 +107,14 @@ class Decimal(Integer):
             raise TypeError("Можно делить только десятичные числа")
         if other._to_int() == 0:
             raise ValueError("Деление на ноль")
-        result = self._to_int() // other._to_int()  # целочисленное деление
+        result = self._to_int() // other._to_int()
         return Decimal._from_int(result)
 
 
 class Binary(Integer):
     """Класс для двоичных чисел"""
 
-    def __init__(self, digits: Optional[List[int]] = None) -> None:  # Исправлено
+    def __init__(self, digits: Optional[List[int]] = None) -> None:
         super().__init__(digits)
         self._validate_bits()
 
@@ -148,23 +140,13 @@ class Binary(Integer):
             n //= 2
         return cls(bits)
 
-    def input(self) -> None:
-        """Ввод двоичного числа с клавиатуры"""
-        try:
-            bin_str = input("Введите двоичное число: ")
-            # Проверяем, что строка содержит только 0 и 1
-            if not all(bit in "01" for bit in bin_str):
-                raise ValueError()
-            self.digits = [int(bit) for bit in bin_str]
-            self._validate_bits()
-        except ValueError:
-            raise ValueError("Некорректный ввод двоичного числа")
+    def __str__(self) -> str:
+        """Строковое представление в виде двоичного числа"""
+        return "".join(map(str, self.digits))
 
-    def output(self) -> None:
-        """Вывод двоичного числа"""
-        print(f"Двоичное число: {''.join(map(str, self.digits))}")
-        print(f"Десятичное значение: {self._to_int()}")
-        print(f"Представление в виде массива битов: {self.digits}")
+    def __repr__(self) -> str:
+        """Формальное представление в виде массива битов"""
+        return f"Binary({self.digits})"
 
     def add(self, other: "Binary") -> "Binary":
         """Сложение двоичных чисел"""
@@ -193,74 +175,84 @@ class Binary(Integer):
             raise TypeError("Можно делить только двоичные числа")
         if other._to_int() == 0:
             raise ValueError("Деление на ноль")
-        result = self._to_int() // other._to_int()  # целочисленное деление
+        result = self._to_int() // other._to_int()
         return Binary._from_int(result)
 
 
+class Reader:
+    @staticmethod
+    def read_decimal() -> Decimal:
+        """Чтение десятичного числа с клавиатуры"""
+        try:
+            num_str = input("Введите десятичное число: ")
+            num = int(num_str)
+            return Decimal._from_int(num)
+        except ValueError:
+            raise ValueError("Некорректный ввод десятичного числа")
+
+    @staticmethod
+    def read_binary() -> Binary:
+        """Чтение двоичного числа с клавиатуры"""
+        try:
+            bin_str = input("Введите двоичное число: ")
+            if not all(bit in "01" for bit in bin_str):
+                raise ValueError()
+            return Binary([int(bit) for bit in bin_str])
+        except ValueError:
+            raise ValueError("Некорректный ввод двоичного числа")
+
+
 def demonstrate_output(number_obj: Integer) -> None:
-    """
-    Функция для демонстрации виртуального вызова
-    Получает параметр базового класса по ссылке
-    """
     print("Виртуальный вызов:")
-    number_obj.output()
+    print(f"Строковое представление: {number_obj}")
+    print(f"Формальное представление: {repr(number_obj)}")
 
 
 if __name__ == "__main__":
     dec1 = Decimal([1, 2, 3])
-    dec1.output()
+    print(f"dec1: {dec1} (repr: {repr(dec1)})")
 
     dec2 = Decimal([4, 5])
-    dec2.output()
+    print(f"dec2: {dec2} (repr: {repr(dec2)})")
 
     result_add = dec1.add(dec2)
-    print("123 + 45 =", end=" ")
-    result_add.output()
+    print(f"123 + 45 = {result_add}")
 
     result_sub = dec1.subtract(dec2)
-    print("123 - 45 =", end=" ")
-    result_sub.output()
+    print(f"123 - 45 = {result_sub}")
 
     result_mul = dec1.multiply(dec2)
-    print("123 * 45 =", end=" ")
-    result_mul.output()
+    print(f"123 * 45 = {result_mul}")
 
     result_div = dec1.divide(dec2)
-    print("123 // 45 =", end=" ")
-    result_div.output()
+    print(f"123 // 45 = {result_div}")
 
     bin1 = Binary([1, 0, 1, 0])
-    bin1.output()
+    print(f"bin1: {bin1} (repr: {repr(bin1)})")
 
     bin2 = Binary([1, 1, 0])
-    bin2.output()
+    print(f"bin2: {bin2} (repr: {repr(bin2)})")
 
     result_add_bin = bin1.add(bin2)
-    print("1010 + 110 =", end=" ")
-    result_add_bin.output()
+    print(f"1010 + 110 = {result_add_bin}")
 
     result_sub_bin = bin1.subtract(bin2)
-    print("1010 - 110 =", end=" ")
-    result_sub_bin.output()
+    print(f"1010 - 110 = {result_sub_bin}")
 
     result_mul_bin = bin1.multiply(bin2)
-    print("1010 * 110 =", end=" ")
-    result_mul_bin.output()
+    print(f"1010 * 110 = {result_mul_bin}")
 
     result_div_bin = bin1.divide(bin2)
-    print("1010 // 110 =", end=" ")
-    result_div_bin.output()
+    print(f"1010 // 110 = {result_div_bin}")
 
     demonstrate_output(dec1)
     demonstrate_output(bin1)
 
     try:
-        dec_input = Decimal()
-        dec_input.input()
+        dec_input = Reader.read_decimal()
         demonstrate_output(dec_input)
 
-        bin_input = Binary()
-        bin_input.input()
+        bin_input = Reader.read_binary()
         demonstrate_output(bin_input)
     except Exception as e:
         print(f"Ошибка ввода: {e}")

@@ -1,4 +1,4 @@
-from src.task_package.zad1 import Number, Real
+from .task_package.zad1 import Number, Real
 
 
 def main() -> None:
